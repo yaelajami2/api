@@ -1,25 +1,27 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
-#For more information, please see https://aka.ms/containercompat
-
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
-WORKDIR /app
-EXPOSE 80
-EXPOSE 443
-
+# Use the official .NET SDK image
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
-WORKDIR /src
-COPY ["./api.csproj", "api/"]
-RUN dotnet restore "api/api.csproj"
-COPY . .
-WORKDIR /app
-RUN dotnet build "api.csproj" -c Release -o /app/build
 
-FROM build AS publish
-RUN dotnet publish "api.csproj" -c Release -o /app/publish
-
-FROM base AS final
+# Set the working directory
 WORKDIR /app
-COPY --from=publish /app/publish .
+
+# Copy the project file and restore dependencies
+COPY ./api/api.csproj ./api/
+RUN dotnet restore ./api/api.csproj
+
+# Copy the rest of the application code
+COPY . ./
+
+# Build the application
+RUN dotnet build ./api/api.csproj -c Release -o /app/build
+
+# Use the official .NET runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS runtime
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the build output
+COPY --from=build /app/build .
+
+# Run the application
 ENTRYPOINT ["dotnet", "api.dll"]
