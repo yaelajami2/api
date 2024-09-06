@@ -5,14 +5,14 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /app
 
 # Copy the project file and restore dependencies
-COPY ./api/api.csproj ./api/
-RUN dotnet restore ./api/api.csproj
+COPY ./api.csproj ./
+RUN dotnet restore ./api.csproj
 
 # Copy the rest of the application code
 COPY . ./
 
 # Build the application
-RUN dotnet build ./api/api.csproj -c Release -o /app/build
+RUN dotnet build ./api.csproj -c Release -o /app/build
 
 # Use the official .NET runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS runtime
