@@ -4,6 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>b9ecb45a-38cd-42e9-8f7d-1db6d368eb64</UserSecretsId>
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <StartupObject>api.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
